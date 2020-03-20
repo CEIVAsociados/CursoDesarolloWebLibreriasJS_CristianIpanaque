@@ -27,23 +27,66 @@ function cambiarColorTitulo(selector){
 //Iniciar el juego
 function iniciarJuego(){
 	$('.btn-reinicio').click(function () {
-		parar();
-		mov = 0;
-		time = 2;
-		puntos = 0;
-		$("#movimientos-text").text("0");
-		$("#score-text").text("0");
-		$("#timer").text("02:00")
+		if($(this).text() == "Reiniciar"){
+			location.reload(true);
+		}
 		$(this).text("Reiniciar");
 		//agregarDulcesPantalla();
-		iniciar();
+		$("#timer").iniciar({
+			onComplete: function(){
+				finJuego();
+			}
+		});
 	});
+}
+
+function finJuego(){
+	$('div.panel-tablero, div.time').effect('blind',1200);
+	$('h1.main-titulo').addClass('title-over')
+		.text('¡El juego terminó!');
+	$('div.score, div.moves, div.panel-score').width('100%');
 }
 //Cargar dulces aleatoriamente
 function cargarDulcesAleatorios() {
     return Math.floor(Math.random() * 4) + 1;
 }
 
+/*function dulcesenFilas(index) {
+	var dulceFilas = cargarDulcesPantalla('rows', index);
+	return dulceFilas;
+}
+
+function dulcesenColumnas(index) {
+	var dulceColumnas = cargarDulcesPantalla('columns');
+	return dulceColumnas[index];
+}
+
+function cargarDulcesPantalla(tipoArreglo, index){
+	var column1 = $('.col-1').children();
+	var column2 = $('.col-2').children();
+	var column3 = $('.col-3').children();
+	var column4 = $('.col-4').children();
+	var column5 = $('.col-5').children();
+	var column6 = $('.col-6').children();
+	var column7 = $('.col-7').children();
+
+	var dulcesenColumnas = $([column1, column2, column3, column4,
+		column5, column6, column7]);
+
+	if (typeof index === 'number') {
+		var dulcesenFilas = $([column1.eq(index), column2.eq(index), column3.eq(index),
+			column4.eq(index), column5.eq(index), column6.eq(index),
+			column7.eq(index)]);
+	} else {
+		index = '';
+	}
+
+	if (tipoArreglo === 'columns') {
+		return dulcesenColumnas;
+	} else if (tipoArreglo === 'rows' && index !== '') {
+		return dulcesenFilas;
+	}
+}*/
 
 $(document).ready(function(){
   	cambiarColorTitulo(".main-titulo");

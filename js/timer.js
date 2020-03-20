@@ -1,17 +1,17 @@
 var initialTimer = 120000;
 var intervalo = 1000;
-var segundos = 60;
-var minutos = 2;
+var segundos = 4;
+var minutos = 0;
 var control;
+var onComplete;
 
-function iniciar(){
+$.fn.iniciar = function(options){
+	onComplete = options.onComplete;
 	control = setInterval(countDown, intervalo);
 }
 
 function parar(){
 	clearInterval(control);
-	segundos = 60;
-	minutos = 2;
 }
 
 function countDown() {
@@ -29,7 +29,9 @@ function countDown() {
 		if(segundos == 0){
 			timer.innerHTML = "0"+minutos+":0"+segundos;
 			if(minutos == 0 && segundos == 0){
+				end = true;
 				parar();
+				onComplete();
 			}
 			segundos = 60;
 		}
