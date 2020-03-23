@@ -1,7 +1,7 @@
 var initialTimer = 120000;
 var intervalo = 1000;
-var segundos = 4;
-var minutos = 0;
+var segundos = 60;
+var minutos = 2;
 var control;
 var onComplete;
 
