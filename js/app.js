@@ -65,6 +65,7 @@ function cargarDulcesPantalla() {
 		}
 	});
 	validar();
+	eventosDulces();
 }
 //3. Se crea las siguientes funciones para capturar las filas y columnas para comparar y luego eliminar dulces
 function dulcesenFilas(index) {
@@ -217,6 +218,27 @@ function validar() {
 	}
 }
 
+//Se procede a dar puntuacion por cada dulce que sea eliminado.
+function puntuacion(numero_dulces) {
+	var puntos = Number($('#score-text').text());
+	switch (numero_dulces) {
+		case 3:
+			puntos += 1;
+			break;
+		case 4:
+			puntos += 2;
+			break;
+		case 5:
+			puntos += 4;
+			break;
+		case 6:
+			puntos += 6;
+			break;
+		case 7:
+			score += 10;
+	}
+	$('#score-text').text(puntos);
+}
 //4. Cuando termina el temporizador la pantalla cambia. Se esconde el tablero y se muestra la puntuacion 
 //y movimientos al 100%
 function finJuego(){
@@ -224,6 +246,33 @@ function finJuego(){
 	$('h1.main-titulo').addClass('title-over')
 		.text('¡El juego terminó!');
 	$('div.score, div.moves, div.panel-score').width('100%');
+}
+//5. Cuando se realiza un movimiento se cuenta y se muestra el mumero total de movimientos.
+function cambiarDulces(event, arrastrarDulce) {
+	var arrastrarDulce = $(arrastrarDulce.draggable);
+	var srcMover = arrastrarDulce.attr('src');
+	var eliminarDulce = $(this);
+	var srcEliminar = eliminarDulce.attr('src');
+	arrastrarDulce.attr('src', srcEliminar);
+	eliminarDulce.attr('src', srcMover);
+
+	setTimeout(function () {
+		cargarDulcesPantalla();
+		if ($('img.eliminar').length === 0) {
+			arrastrarDulce.attr('src', srcMover);
+			eliminarDulce.attr('src', srcEliminar);
+		} else {
+			actualizar();
+		}
+	}, 1000);
+
+}
+
+//Se cuenta la cantidad de movimientos y se muestea.
+function actualizar() {
+	var valor = Number($('#movimientos-text').text());
+	var movimiento = valor += 1;
+	$('#movimientos-text').text(movimiento);
 }
 
 $(document).ready(function(){
