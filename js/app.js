@@ -1,4 +1,5 @@
-var mov = 0;
+var cant_mov = 0;
+var numero_mov = 0;
 var puntos = 0;
 
 //1. Cambiar el color del Titulo cada cierto tiempo
@@ -46,6 +47,7 @@ function iniciarJuego(){
 function cargarDulcesAleatorios() {
     return Math.floor(Math.random() * 4) + 1;
 }
+
 //Cargar los dulces en pantalla
 function cargarDulcesPantalla() {
 	var col = $("[class^='col-']");
@@ -64,9 +66,10 @@ function cargarDulcesPantalla() {
 			}
 		}
 	});
-	validar();
 	eventosDulces();
+	validar();
 }
+
 //3. Se crea las siguientes funciones para capturar las filas y columnas para comparar y luego eliminar dulces
 function dulcesenFilas(index) {
 	var dulceFilas = cargarDulcesArray("filas", index);
@@ -104,6 +107,7 @@ function cargarDulcesArray(tipoArreglo, index){
 		return dulcesenFilas;
 	}
 }
+
 //Se valida las columnas y filas para eliminar dulces.
 function validarColumnas() {
 	for (var k = 0; k < 7; k++) {
@@ -209,18 +213,9 @@ function validarFilas() {
 	}
 }
 
-// Elimina dulces si hay coincidencia en la pantalla
-function validar() {
-	validarColumnas();
-	validarFilas();
-	if ($("img.eliminar").length !== 0) {
-		efectoEliminarDulces();
-	}
-}
-
 //Se procede a dar puntuacion por cada dulce que sea eliminado.
 function puntuacion(numero_dulces) {
-	var puntos = Number($('#score-text').text());
+	puntos = Number($('#score-text').text());
 	switch (numero_dulces) {
 		case 3:
 			puntos += 1;
@@ -239,6 +234,16 @@ function puntuacion(numero_dulces) {
 	}
 	$('#score-text').text(puntos);
 }
+
+// Elimina dulces si hay coincidencia en la pantalla
+function validar() {
+	validarColumnas();
+	validarFilas();
+	if ($("img.eliminar").length !== 0) {
+		efectoEliminarDulces();
+	}
+}
+
 //4. Cuando termina el temporizador la pantalla cambia. Se esconde el tablero y se muestra la puntuacion 
 //y movimientos al 100%
 function finJuego(){
@@ -247,6 +252,7 @@ function finJuego(){
 		.text('¡El juego terminó!');
 	$('div.score, div.moves, div.panel-score').width('100%');
 }
+
 //5. Cuando se realiza un movimiento se cuenta y se muestra el mumero total de movimientos.
 function cambiarDulces(event, arrastrarDulce) {
 	var arrastrarDulce = $(arrastrarDulce.draggable);
@@ -270,9 +276,69 @@ function cambiarDulces(event, arrastrarDulce) {
 
 //Se cuenta la cantidad de movimientos y se muestea.
 function actualizar() {
-	var valor = Number($('#movimientos-text').text());
-	var movimiento = valor += 1;
-	$('#movimientos-text').text(movimiento);
+	numero_mov = Number($('#movimientos-text').text());
+	cant_mov = numero_mov += 1;
+	$('#movimientos-text').text(cant_mov);
+}
+
+//7. El usuario interactua mediante los metodos drop y drag
+function eventosDulces() {
+	$('img').draggable({
+		containment: '.panel-tablero',
+		droppable: 'img',
+		revert: true,
+		revertDuration: 1000,
+		grid: [100, 100],
+		zIndex: 10,
+		drag: movimientoDulce
+	});
+	$('img').droppable({
+		drop: cambiarDulces
+	});
+	activarEventos();
+}
+
+function desactivarEventos() {
+	$('img').draggable('disable');
+	$('img').droppable('disable');
+}
+
+function activarEventos() {
+	$('img').draggable('enable');
+	$('img').droppable('enable');
+}
+
+function movimientoDulce(event, arrastrar) {
+	arrastrar.position.top = Math.min(100, arrastrar.position.top);
+	arrastrar.position.bottom = Math.min(100, arrastrar.position.bottom);
+	arrastrar.position.left = Math.min(100, arrastrar.position.left);
+	arrastrar.position.right = Math.min(100, arrastrar.position.right);
+}
+
+//Efecto cuando se eliminan los dulces.
+function efectoEliminarDulces() {
+	desactivarEventos();//desactiva los efectos de drop y draggable al momento de eliminar dulces.
+	$('img.eliminar').effect('pulsate', 800);
+	$('img.eliminar').animate({
+			opacity: '0'
+		}, {
+			duration: 300
+		})
+		.animate({
+			opacity: '0'
+		}, {
+			duration: 400,
+			complete: function () {
+				eliminarDulces()
+			},
+			queue: true
+		});
+}
+
+//SE eliminan los dulces y vuelve a cargar con dulces nuevos.
+function eliminarDulces() {
+	$('img.eliminar').remove();
+	cargarDulcesPantalla();
 }
 
 $(document).ready(function(){
